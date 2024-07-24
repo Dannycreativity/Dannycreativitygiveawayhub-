@@ -3,6 +3,9 @@ document.addEventListener('DOMContentLoaded', () => {
     const message = document.getElementById('message');
     const wheel = document.getElementById('wheel');
     const pointer = document.querySelector('.pointer');
+    const sessionIdInput = document.getElementById('sessionId');
+    const verifyBtn = document.getElementById('verifyBtn');
+    const verificationMessage = document.getElementById('verificationMessage');
 
     // Prizes and their probabilities
     const prizes = [
@@ -33,12 +36,17 @@ document.addEventListener('DOMContentLoaded', () => {
         { name: 'Share', probability: 5 }
     ];
 
-    // Initialize EmailJS
-    emailjs.init('UDGozdN--zmzh17Gk'); // Replace with your EmailJS user ID
+    let currentSessionId = '';
+
+    // Function to generate a unique session ID
+    function generateSessionId() {
+        return 'session-' + Math.random().toString(36).substr(2, 9);
+    }
 
     // Function to spin the wheel
     function spinWheel() {
         spinBtn.disabled = true;
+        currentSessionId = generateSessionId(); // Generate new session ID
         const prizeIndex = getRandomPrizeIndex();
         const prize = prizes[prizeIndex];
         const angle = 360 * 10 + (360 / prizes.length) * prizeIndex; // Adjust angle for each prize
@@ -49,9 +57,8 @@ document.addEventListener('DOMContentLoaded', () => {
 
         // Display prize after spin
         setTimeout(() => {
-            message.textContent = `You won: ${prize.name}!`;
+            message.textContent = `You won: ${prize.name}! Session ID: ${currentSessionId}`;
             spinBtn.disabled = false;
-            sendPrizeNotification(prize.name); // Send prize notification
         }, 2000); // Adjusted timeout to match the speed of the wheel
     }
 
@@ -70,19 +77,19 @@ document.addEventListener('DOMContentLoaded', () => {
         return prizes.length - 1; // Fallback
     }
 
-    // Function to send prize notification (using EmailJS)
-    function sendPrizeNotification(prizeName) {
-        emailjs.send('08136174779', 'template_a9ir6ms', {
-            prize: prizeName,
-            to_email: 'dannycreativity19@gmail.com' // Replace with the admin's email address
-        })
-        .then((response) => {
-            console.log('SUCCESS!', response.status, response.text);
-        }, (error) => {
-            console.log('FAILED...', error);
-        });
+    // Function to verify the session ID
+    function verifySessionId() {
+        const enteredSessionId = sessionIdInput.value;
+        if (enteredSessionId === currentSessionId) {
+            verificationMessage.textContent = 'Session ID verified successfully!';
+        } else {
+            verificationMessage.textContent = 'Invalid Session ID. Please check and try again.';
+        }
     }
 
     // Event listener for the spin button
     spinBtn.addEventListener('click', spinWheel);
+
+    // Event listener for the verify button
+    verifyBtn.addEventListener('click', verifySessionId);
 });

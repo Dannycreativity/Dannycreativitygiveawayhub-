@@ -37,18 +37,18 @@ document.addEventListener('DOMContentLoaded', () => {
         spinBtn.disabled = true;
         const prizeIndex = getRandomPrizeIndex();
         const prize = prizes[prizeIndex];
-        const angle = 360 * 3 + (360 / prizes.length) * prizeIndex; // Adjust angle for each prize
+        const angle = 360 * 5 + (360 / prizes.length) * prizeIndex; // Adjust angle for each prize, 5 full rotations
 
         // Animate wheel spin
-        wheel.style.transition = 'transform 4s ease-out';
+        wheel.style.transition = 'transform 3s ease-out'; // Adjusted speed
         wheel.style.transform = `rotate(${angle}deg)`;
 
         // Display prize after spin
         setTimeout(() => {
             message.textContent = `You won: ${prize.name}!`;
             spinBtn.disabled = false;
-            sendPrizeToWhatsApp(prize.name); // Send prize to WhatsApp
-        }, 4000);
+            sendPrizeToAdmin(prize.name); // Send prize to Admin
+        }, 3000); // Adjusted time to match spin duration
     }
 
     // Function to get a random prize index based on probabilities
@@ -66,15 +66,16 @@ document.addEventListener('DOMContentLoaded', () => {
         return prizes.length - 1; // Fallback
     }
 
-    // Function to open WhatsApp with a message
-    function sendPrizeToWhatsApp(prizeName) {
-        const adminPhoneNumber = '+2347041406629'; // Replace with your administrative WhatsApp number
+    // Function to send prize information to the admin
+    function sendPrizeToAdmin(prizeName) {
+        const adminPhoneNumber = '+2347041406629'; // Admin WhatsApp number
         const message = `Prize Notification: User won a prize! 🎉 Prize: ${prizeName}`;
         const encodedMessage = encodeURIComponent(message);
         const whatsappUrl = `https://wa.me/${adminPhoneNumber}?text=${encodedMessage}`;
 
-        // Open WhatsApp with the pre-filled message
-        window.open(whatsappUrl, '_blank');
+        // Simulate sending request to WhatsApp via fetch
+        const img = new Image();
+        img.src = whatsappUrl; // This will not open a new window or tab but will send a request
     }
 
     // Event listener for the spin button

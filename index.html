@@ -14,7 +14,7 @@
             margin: 0;
             background-color: #f0f0f0;
         }
-        .game-container {
+        .container {
             text-align: center;
             background-color: #fff;
             padding: 20px;
@@ -56,7 +56,7 @@
             left: 50%;
             transform: translateX(-50%);
         }
-        .spin-btn {
+        button {
             display: inline-block;
             padding: 10px 20px;
             background-color: #28a745;
@@ -66,7 +66,7 @@
             cursor: pointer;
             font-size: 16px;
         }
-        .spin-btn:disabled {
+        button:disabled {
             background-color: #ccc;
             cursor: not-allowed;
         }
@@ -75,32 +75,114 @@
             font-size: 18px;
             color: #333;
         }
-        .verification-container {
-            margin-top: 20px;
-        }
-        .verification-input {
-            display: block;
-            margin: 10px auto;
+        input {
             padding: 10px;
-            font-size: 16px;
+            margin: 10px;
+            width: 200px;
         }
     </style>
 </head>
 <body>
-    <div class="game-container">
+    <div class="container" id="login-container">
+        <h1>Enter Password to Spin the Wheel</h1>
+        <input type="password" id="password-input" placeholder="Enter password">
+        <button onclick="validatePassword()">Login</button>
+        <p id="login-error" style="color: red; display: none;">Invalid password. Please try again.</p>
+    </div>
+    <div class="container" id="spin-container" style="display: none;">
         <img src="Screenshot_20240724_072357.jpg" alt="Danny Creativity Logo" class="logo">
         <h1>Spin and Win!</h1>
         <div class="spin-wheel" id="wheel">
             <div class="pointer"></div>
         </div>
-        <button class="spin-btn" id="spinBtn">Spin</button>
-        <div class="message" id="message"></div>
-        <div class="verification-container">
-            <input type="text" id="sessionId" class="verification-input" placeholder="Enter Session ID">
-            <button id="verifyBtn" class="spin-btn">Verify</button>
-            <div id="verificationMessage" class="message"></div>
-        </div>
+        <button onclick="spin()">Spin</button>
+        <div class="message" id="prize"></div>
+        <div class="message" id="password-used" style="font-style: italic; font-family: 'Cursive';"></div>
     </div>
-    <script src="game.js"></script>
+    <script>
+        const passwords = [
+            "Xc9L#3mbsD1", "P$2pF@9d4Nw", "L!5j4V&2nMm", "Qk1#Z3tJ@7w", "Nr8&0pH$D2f",
+            "F4$hK8dL#2m", "J9#2tP@0dVw", "G$5pR@3n2kD", "U7#d4V&8m2N", "E@1n3J$9d5Q",
+            "H#4d2mP$0kL", "Z7&9p1F@2dW", "K#2d4n3V&8m", "B0p@1D$5j6L", "Y#3d9mP&4k7",
+            "C2@1p5F#8dK", "X#4d9L&2mP3", "V7$0p1D@3j6", "M2#4n3dP$9K", "R@5d1F#8p2L",
+            "N3#2d9mL&4k", "S0p@1D$7j6K", "W#4d2mP&9k3", "O5$1p7F@3dL", "T#2d9m4n&1P",
+            "I0p@5D$3j6K", "A#4d2m9L&7k", "D3$1p7F@0dL", "G#2d9mP&4k1", "J5$0p1D@3d6",
+            "Q2#4n3dL$8K", "L@5d1F#7p9m", "B#4d2mP&1k3", "E7$0p1D@3j6K", "Z#2d4n3L&9m",
+            "M0p@5D$3j6K", "T#4d2m9P&7k", "U3$1p7F@0dL", "R#2d9mL&4k5", "N@5d1F#8p3K",
+            "I0p@5D$3j6L", "S#2d4n3m&9P", "V7$1p0D@3d6K", "W#2d9m4n&1P3", "A5$1p7F@3dL",
+            "D#4d2m9L&7k1", "G3$1p7F@0d5K", "J#2d4n3mL&8P", "Q5$0p1D@3d6K", "L#2d4n3P&9m1",
+            "B0p@5D$3j6K", "E#4d2m9L&7k3", "Z3$1p7F@0d5K", "M#2d4n3mL&8P", "T5$0p1D@3d6K",
+            "U#2d4n3mL&9P1", "R7$1p0D@3d6K", "N#2d9m4n&1P3", "I5$1p7F@3dL", "S#4d2m9L&7k1",
+            "V3$1p7F@0d5K", "W#2d4n3mL&8P", "A5$0p1D@3d6K", "D#2d9m4n&1P3", "G7$1p0D@3d6K",
+            "J#4d2m9L&7k1", "Q3$1p7F@0d5K", "L#2d4n3mL&8P", "B5$0p1D@3d6K", "E#2d9m4n&1P3",
+            "Z7$1p0D@3d6K", "M#4d2m9L&7k1", "T3$1p7F@0d5K", "U#2d4n3mL&8P", "R5$0p1D@3d6K",
+            "N#2d9m4n&1P3", "I7$1p0D@3d6K", "S#4d2m9L&7k1", "V3$1p7F@0d5K", "W#2d4n3mL&8P",
+            "A5$0p1D@3d6K", "D#2d9m4n&1P3", "G7$1p0D@3d6K", "J#4d2m9L&7k1", "Q3$1p7F@0d5K", "L#2d4n3mL&8P", "B5$0p1D@3d6K", "E#2d9m4n&1P3", "Z7$1p0D@3d6K", "M#4d2m9L&7k1",
+            "T3$1p7F@0d5K", "U#2d4n3mL&8P", "R5$0p1D@3d6K", "N#2d9m4n&1P3", "I7$1p0D@3d6K",
+            "S#4d2m9L&7k1", "V3$1p7F@0d5K", "W#2d4n3mL&8P", "A5$0p1D@3d6K", "D#2d9m4n&1P3",
+            "G7$1p0D@3d6K", "J#4d2m9L&7k1", "Q3$1p7F@0d5K", "L#2d4n3mL&8P", "B5$0p1D@3d6K",
+            "E#2d9m4n&1P3", "Z7$1p0D@3d6K", "M#4d2m9L&7k1", "T3$1p7F@0d5K", "U#2d4n3mL&8P",
+            "R5$0p1D@3d6K", "N#2d9m4n&1P3", "I7$1p0D@3d6K", "S#4d2m9L&7k1", "V3$1p7F@0d5K",
+            "W#2d4n3mL&8P", "A5$0p1D@3d6K", "D#2d9m4n&1P3", "G7$1p0D@3d6K", "J#4d2m9L&7k1",
+            "Q3$1p7F@0d5K", "L#2d4n3mL&8P", "B5$0p1D@3d6K", "E#2d9m4n&1P3", "Z7$1p0D@3d6K",
+            "M#4d2m9L&7k1", "T3$1p7F@0d5K", "U#2d4n3mL&8P", "R5$0p1D@3d6K", "N#2d9m4n&1P3",
+            "I7$1p0D@3d6K", "S#4d2m9L&7k1", "V3$1p7F@0d5K", "W#2d4n3mL&8P", "A5$0p1D@3d6K",
+            "D#2d9m4n&1P3", "G7$1p0D@3d6K", "J#4d2m9L&7k1", "Q3$1p7F@0d5K", "L#2d4n3mL&8P",
+            "B5$0p1D@3d6K", "E#2d9m4n&1P3", "Z7$1p0D@3d6K", "M#4d2m9L&7k1", "T3$1p7F@0d5K",
+            "U#2d4n3mL&8P", "R5$0p1D@3d6K", "N#2d9m4n&1P3", "I7$1p0D@3d6K", "S#4d2m9L&7k1",
+            "V3$1p7F@0d5K", "W#2d4n3mL&8P", "A5$0p1D@3d6K", "D#2d9m4n&1P3", "G7$1p0D@3d6K",
+            "J#4d2m9L&7k1", "Q3$1p7F@0d5K", "L#2d4n3mL&8P", "B5$0p1D@3d6K", "E#2d9m4n&1P3",
+            "Z7$1p0D@3d6K", "M#4d2m9L&7k1", "T3$1p7F@0d5K", "U#2d4n3mL&8P", "R5$0p1D@3d6K",
+            "N#2d9m4n&1P3", "I7$1p0D@3d6K", "S#4d2m9L&7k1", "V3$1p7F@0d5K", "W#2d4n3mL&8P"
+        ];
+        
+        let usedPasswords = [];
+
+        function validatePassword() {
+            const input = document.getElementById('password-input').value;
+            if (passwords.includes(input) && !usedPasswords.includes(input)) {
+                usedPasswords.push(input);
+                sessionStorage.setItem('password', input);
+                document.getElementById('login-container').style.display = 'none';
+                document.getElementById('spin-container').style.display = 'block';
+            } else {
+                document.getElementById('login-error').style.display = 'block';
+            }
+        }
+
+        function spin() {
+            const wheel = document.getElementById('wheel');
+            const prizeElement = document.getElementById('prize');
+            const passwordUsed = document.getElementById('password-used');
+            const password = sessionStorage.getItem('password');
+            const duration = Math.random() * 5000 + 3000;
+            const rotations = Math.random() * 10 + 10;
+            const degrees = rotations * 360;
+
+            wheel.style.transition = `transform ${duration}ms ease-out`;
+            wheel.style.transform = `rotate(${degrees}deg)`;
+
+            setTimeout(() => {
+                const finalDegrees = degrees % 360;
+                const prize = getPrize(finalDegrees);
+                prizeElement.textContent = `You won: ${prize}`;
+                passwordUsed.textContent = `Used Password: ${password}`;
+                document.querySelector('button').disabled = true;
+            }, duration);
+        }
+
+        function getPrize(degrees) {
+            if (degrees <= 36) return 'Digital Graphic Design Calendar';
+            if (degrees <= 72) return '₦50 Airtime Voucher';
+            if (degrees <= 108) return '₦100 Airtime Voucher';
+            if (degrees <= 144) return '₦150 Airtime Voucher';
+            if (degrees <= 180) return '₦200 Airtime Voucher';
+            if (degrees <= 216) return '₦250 Airtime Voucher';
+            if (degrees <= 252) return '₦300 Airtime Voucher';
+            if (degrees <= 288) return '₦350 Airtime Voucher';
+            if (degrees <= 324) return '₦400 Airtime Voucher';
+            if (degrees <= 360) return '₦500 Airtime Voucher';
+        }
+    </script>
 </body>
 </html>

@@ -2,6 +2,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const spinBtn = document.getElementById('spinBtn');
     const message = document.getElementById('message');
     const wheel = document.getElementById('wheel');
+    const pointer = document.querySelector('.pointer');
 
     // Prizes and their probabilities
     const prizes = [
@@ -32,23 +33,26 @@ document.addEventListener('DOMContentLoaded', () => {
         { name: 'Share', probability: 5 }
     ];
 
+    // Initialize EmailJS
+    emailjs.init('UDGozdN--zmzh17Gk'); // Replace with your EmailJS user ID
+
     // Function to spin the wheel
     function spinWheel() {
         spinBtn.disabled = true;
         const prizeIndex = getRandomPrizeIndex();
         const prize = prizes[prizeIndex];
-        const angle = 360 * 10 + (360 / prizes.length) * prizeIndex; // Adjust angle for each prize, 10 full rotations
+        const angle = 360 * 10 + (360 / prizes.length) * prizeIndex; // Adjust angle for each prize
 
         // Animate wheel spin
-        wheel.style.transition = 'transform 1s ease-out'; // Adjusted speed
+        wheel.style.transition = 'transform 2s ease-out'; // Increased speed
         wheel.style.transform = `rotate(${angle}deg)`;
 
         // Display prize after spin
         setTimeout(() => {
             message.textContent = `You won: ${prize.name}!`;
             spinBtn.disabled = false;
-            sendPrizeToAdmin(prize.name); // Send prize to Admin
-        }, 1000); // Adjusted time to match spin duration
+            sendPrizeNotification(prize.name); // Send prize notification
+        }, 2000); // Adjusted timeout to match the speed of the wheel
     }
 
     // Function to get a random prize index based on probabilities
@@ -66,23 +70,17 @@ document.addEventListener('DOMContentLoaded', () => {
         return prizes.length - 1; // Fallback
     }
 
-    // Function to send prize information to the admin
-    function sendPrizeToAdmin(prizeName) {
-        const adminPhoneNumber = '+2347041406629'; // Admin WhatsApp number
-        const message = `Prize Notification: User won a prize! 🎉 Prize: ${prizeName}`;
-        const encodedMessage = encodeURIComponent(message);
-        const whatsappUrl = `https://wa.me/${adminPhoneNumber}?text=${encodedMessage}`;
-
-        // Create an invisible iframe to send the request silently
-        const iframe = document.createElement('iframe');
-        iframe.style.display = 'none';
-        iframe.src = whatsappUrl;
-        document.body.appendChild(iframe);
-
-        // Remove the iframe after some time to avoid clutter
-        setTimeout(() => {
-            document.body.removeChild(iframe);
-        }, 5000);
+    // Function to send prize notification (using EmailJS)
+    function sendPrizeNotification(prizeName) {
+        emailjs.send('08136174779', 'template_a9ir6ms', {
+            prize: prizeName,
+            to_email: 'dannycreativity19@gmail.com' // Replace with the admin's email address
+        })
+        .then((response) => {
+            console.log('SUCCESS!', response.status, response.text);
+        }, (error) => {
+            console.log('FAILED...', error);
+        });
     }
 
     // Event listener for the spin button

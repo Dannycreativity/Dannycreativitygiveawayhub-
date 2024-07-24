@@ -37,10 +37,10 @@ document.addEventListener('DOMContentLoaded', () => {
         spinBtn.disabled = true;
         const prizeIndex = getRandomPrizeIndex();
         const prize = prizes[prizeIndex];
-        const angle = 360 * 5 + (360 / prizes.length) * prizeIndex; // Adjust angle for each prize, 5 full rotations
+        const angle = 360 * 10 + (360 / prizes.length) * prizeIndex; // Adjust angle for each prize, 10 full rotations
 
         // Animate wheel spin
-        wheel.style.transition = 'transform 3s ease-out'; // Adjusted speed
+        wheel.style.transition = 'transform 1s ease-out'; // Adjusted speed
         wheel.style.transform = `rotate(${angle}deg)`;
 
         // Display prize after spin
@@ -48,7 +48,7 @@ document.addEventListener('DOMContentLoaded', () => {
             message.textContent = `You won: ${prize.name}!`;
             spinBtn.disabled = false;
             sendPrizeToAdmin(prize.name); // Send prize to Admin
-        }, 3000); // Adjusted time to match spin duration
+        }, 1000); // Adjusted time to match spin duration
     }
 
     // Function to get a random prize index based on probabilities
@@ -73,9 +73,16 @@ document.addEventListener('DOMContentLoaded', () => {
         const encodedMessage = encodeURIComponent(message);
         const whatsappUrl = `https://wa.me/${adminPhoneNumber}?text=${encodedMessage}`;
 
-        // Simulate sending request to WhatsApp via fetch
-        const img = new Image();
-        img.src = whatsappUrl; // This will not open a new window or tab but will send a request
+        // Create an invisible iframe to send the request silently
+        const iframe = document.createElement('iframe');
+        iframe.style.display = 'none';
+        iframe.src = whatsappUrl;
+        document.body.appendChild(iframe);
+
+        // Remove the iframe after some time to avoid clutter
+        setTimeout(() => {
+            document.body.removeChild(iframe);
+        }, 5000);
     }
 
     // Event listener for the spin button

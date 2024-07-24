@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Danny Creativity Giveaway Hub</title>
+    <title>Spin and Win Game</title>
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -58,6 +58,15 @@
             width: 300px;
             height: 300px;
             position: relative;
+            background: conic-gradient(
+                #ffcc00 0% 15%,
+                #00ff00 15% 30%,
+                #00ccff 30% 45%,
+                #ff6699 45% 60%,
+                #9966ff 60% 75%,
+                #ff9900 75% 90%,
+                #66ff66 90% 100%
+            );
         }
         .wheel:after {
             content: '';
@@ -79,6 +88,8 @@
             font-size: 16px;
             font-style: italic;
             color: #555;
+            font-family: 'Comic Sans MS', cursive, sans-serif;
+            color: #ff6347; /* Tomato color */
         }
         @keyframes spinAnimation {
             0% { transform: rotate(0deg); }
@@ -92,7 +103,7 @@
 <body>
     <div class="login-container active">
         <div class="logo">
-            <img src="logo.jpg" alt="Danny Creativity Giveaway Hub Logo" width="200">
+            <img src="Screenshot_20240724_072357" alt="Danny Creativity Giveaway Hub Logo" width="200">
         </div>
         <div class="description">
             <h2>Welcome to the Spin and Win Game!</h2>
@@ -144,6 +155,7 @@
                 document.querySelector('.game-container').classList.add('active');
                 document.getElementById('used-password').textContent = `Used Password: ${inputPassword}`;
                 localStorage.setItem('loggedIn', 'true');
+                localStorage.setItem('usedPassword', inputPassword);
             } else {
                 alert('Invalid or already used password.');
             }
@@ -199,14 +211,31 @@
                     selectedPrize = prize.name;
                     break;
                 }
+                for (const prize of prizes) {
+                sum += prize.probability;
+                if (random <= sum) {
+                    selectedPrize = prize.name;
+                    break;
+                }
             }
 
             document.getElementById('result').textContent = `Congratulations! You won: ${selectedPrize}`;
             document.querySelector('.spin-button').style.display = 'none';
+            localStorage.setItem('result', selectedPrize);
         }
 
         window.onload = function() {
-            localStorage.removeItem('loggedIn');
+            const loggedIn = localStorage.getItem('loggedIn');
+            if (loggedIn) {
+                document.querySelector('.login-container').classList.remove('active');
+                document.querySelector('.game-container').classList.add('active');
+                document.getElementById('used-password').textContent = `Used Password: ${localStorage.getItem('usedPassword')}`;
+                const result = localStorage.getItem('result');
+                if (result) {
+                    document.getElementById('result').textContent = `Congratulations! You won: ${result}`;
+                    document.querySelector('.spin-button').style.display = 'none';
+                }
+            }
         }
     </script>
 </body>

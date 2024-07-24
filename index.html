@@ -211,22 +211,16 @@
                     selectedPrize = prize.name;
                     break;
                 }
-                for (const prize of prizes) {
-                sum += prize.probability;
-                if (random <= sum) {
-                    selectedPrize = prize.name;
-                    break;
-                }
             }
 
-            document.getElementById('result').textContent = `Congratulations! You won: ${selectedPrize}`;
+       document.getElementById('result').textContent = `Congratulations! You won: ${selectedPrize}`;
             document.querySelector('.spin-button').style.display = 'none';
             localStorage.setItem('result', selectedPrize);
         }
 
         window.onload = function() {
             const loggedIn = localStorage.getItem('loggedIn');
-            if (loggedIn) {
+            if (loggedIn === 'true') {
                 document.querySelector('.login-container').classList.remove('active');
                 document.querySelector('.game-container').classList.add('active');
                 document.getElementById('used-password').textContent = `Used Password: ${localStorage.getItem('usedPassword')}`;
@@ -239,4 +233,4 @@
         }
     </script>
 </body>
-</html>
+    </html>

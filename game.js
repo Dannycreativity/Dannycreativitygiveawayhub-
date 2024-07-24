@@ -68,7 +68,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // Function to open WhatsApp with a message
     function sendPrizeToWhatsApp(prizeName) {
-        const adminPhoneNumber = '07041406629'; // Replace with your administrative WhatsApp number
+        const adminPhoneNumber = '+2347041406629'; // Replace with your administrative WhatsApp number
         const message = `Prize Notification: User won a prize! 🎉 Prize: ${prizeName}`;
         const encodedMessage = encodeURIComponent(message);
         const whatsappUrl = `https://wa.me/${adminPhoneNumber}?text=${encodedMessage}`;

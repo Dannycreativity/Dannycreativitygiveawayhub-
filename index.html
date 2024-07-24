@@ -75,6 +75,15 @@
             font-size: 18px;
             color: #333;
         }
+        .verification-container {
+            margin-top: 20px;
+        }
+        .verification-input {
+            display: block;
+            margin: 10px auto;
+            padding: 10px;
+            font-size: 16px;
+        }
     </style>
 </head>
 <body>
@@ -86,8 +95,12 @@
         </div>
         <button class="spin-btn" id="spinBtn">Spin</button>
         <div class="message" id="message"></div>
+        <div class="verification-container">
+            <input type="text" id="sessionId" class="verification-input" placeholder="Enter Session ID">
+            <button id="verifyBtn" class="spin-btn">Verify</button>
+            <div id="verificationMessage" class="message"></div>
+        </div>
     </div>
-    <script src="https://cdn.emailjs.com/dist/email.min.js"></script>
     <script src="game.js"></script>
 </body>
 </html>
